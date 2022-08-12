@@ -1,7 +1,7 @@
-# Ogre-next imgui
+# ogre-next imgui
 
-#### An imgui backend for Ogre-next
-A portable implementation of imgui for projects using Ogre-next.
+#### An imgui backend for ogre-next
+A portable implementation of imgui for projects using ogre-next.
 
 This repo includes an example demo showing how to use it.
 
