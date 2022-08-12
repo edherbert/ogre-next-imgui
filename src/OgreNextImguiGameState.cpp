@@ -45,6 +45,7 @@ namespace Demo
     {
 
     }
+    //-----------------------------------------------------------------------------------
     bool OgreNextImguiGameState::frameRenderingQueued(const Ogre::FrameEvent& evt){
         ImguiManager::getSingletonPtr()->render();
 

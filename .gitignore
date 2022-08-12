@@ -1,1 +1,6 @@
 build/
+include/
+src/OgreCommon
+bin
+.DS_Store
+.vscode

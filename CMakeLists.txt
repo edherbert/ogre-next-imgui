@@ -7,50 +7,27 @@
 #
 # If your source code is not at "Dependencies/Ogre"; you can use "mklink /D" to create
 # a symbolic link to where the source code is located on Windows.
-# On Linux, you can use "ln -s"
-
-#If you get errors finding doxygen, i.e 'Could NOT find Doxygen (missing: dot)',
-#you need to install graphviz, as well as doxygen
-#apt install graphviz, brew install graphviz
-
-#set( CMAKE_TOOLCHAIN_FILE CMake/iOS.cmake )
+# In Unix, you can use "ln -s"
 
 cmake_minimum_required( VERSION 3.3 )
 project( imguiOgreNext )
 
-# if( NOT COLIBRIGUI_LIB_ONLY )
-    set( EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}" )
-    include( CMake/Bootstrap.cmake )
-    include( CMake/Dependencies/OGRE.cmake )
-# else()
-# 	include( CMake/Bootstrap.cmake )
-# endif()
+set( EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}" )
+include( CMake/Bootstrap.cmake )
+include( CMake/Dependencies/OGRE.cmake )
 
-# if( NOT COLIBRIGUI_LIB_ONLY )
-	setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES )
-# else()
-# 	include_directories( "${OGRE_SOURCE}/OgreMain/include" )
-# 	include_directories( "${OGRE_BINARIES}/include" )
-# 	include_directories( "${OGRE_SOURCE}/Components/Hlms/Common/include" )
-# 	include_directories( "${OGRE_SOURCE}/Components/Hlms/Unlit/include" )
-# endif()
+setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES )
 
-# if( NOT COLIBRIGUI_LIB_ONLY )
-	file(GLOB_RECURSE SOURCES "src/*.cpp")
-	file(GLOB_RECURSE HEADERS "src/*.h")
-	# if( APPLE )
-	# 	file(GLOB_RECURSE MMSOURCES "src/OgreCommon/System/OSX/*.mm")
-	# endif()
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "src/*.h")
+# if( APPLE )
+# 	file(GLOB_RECURSE MMSOURCES "src/OgreCommon/System/OSX/*.mm")
+# endif()
 
 file(GLOB IMGUI_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/*.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/)
-
-# else()
-# 	add_recursive( ./src/ColibriGui SOURCES )
-# 	add_recursive( ./include/ColibriGui HEADERS )
-# endif()
 
 # if( APPLE )
 # 	set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11" )
@@ -66,15 +43,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/)
 # 	set( RESOURCES ${RESOURCES} ./bin/Data "./bin/Data/resources2.cfg" "/tmp/plugins.cfg" "${OGRE_SOURCE}/Samples/Media/" )
 # endif()
 
-# if( NOT COLIBRIGUI_LIB_ONLY )
 # 	if( APPLE )
 # 		add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${MMSOURCES} ${RESOURCES} )
 # 	else()
 		add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
 # 	endif()
-# else()
-# 	add_library( ${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS} )
-# endif()
 
 target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
 
@@ -86,9 +59,6 @@ if( APPLE )
 	set_target_properties( ${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
 	set_target_properties( ${PROJECT_NAME} PROPERTIES RESOURCE "${RESOURCES}" )
 	set_target_properties( ${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/src/OgreCommon/System/OSX/Resources/Info.plist )
-	#set_target_properties( ${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE SampleBrowser_OSX.icns)
-	#set( CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework QuartzCore -framework UIKit -framework Metal -framework MetalKit -framework ModelIO" )
-	#set( CMAKE_EXE_LINKER_FLAGS "-framework Foundation -framework CoreGraphics -framework IOKit -framework CoreAudio -framework QuartzCore -framework Metal -framework MetalKit -framework ModelIO" )
 	set( CMAKE_EXE_LINKER_FLAGS "
 		-framework QuartzCore
 		-framework Metal
