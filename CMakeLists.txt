@@ -20,50 +20,52 @@ setupOgre( OGRE_SOURCE, OGRE_BINARIES, OGRE_LIBRARIES )
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "src/*.h")
-# if( APPLE )
-# 	file(GLOB_RECURSE MMSOURCES "src/OgreCommon/System/OSX/*.mm")
-# endif()
+if( APPLE )
+    file(GLOB_RECURSE MMSOURCES "src/OgreCommon/System/OSX/*.mm")
+endif()
 
 file(GLOB IMGUI_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/*.cpp"
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/)
 
-# if( APPLE )
-# 	set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11" )
-# 	set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++" )
-# 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++" )
+if( APPLE )
+    set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11" )
+    set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -x objective-c++" )
 
-# 	#Set the pluginFolder path in the plugins.cfg file.
-# 	#Make a copy of the original one so it can be edited.
-# 	execute_process( COMMAND "cp" "${OGRE_BINARIES}/bin/plugins.cfg" "/tmp/plugins.cfg" )
-# 	execute_process( COMMAND bash -c "/usr/bin/sed -i '' 's#PluginFolder=#PluginFolder=${OGRE_BINARIES}/lib/macosx/${CMAKE_BUILD_TYPE}/#g' /tmp/plugins.cfg" )
+    #Set the pluginFolder path in the plugins.cfg file.
+    #Make a copy of the original one so it can be edited.
+    execute_process( COMMAND "cp" "${OGRE_BINARIES}/bin/plugins.cfg" "/tmp/plugins.cfg" )
+    execute_process( COMMAND bash -c "/usr/bin/sed -i '' 's#PluginFolder=#PluginFolder=${OGRE_BINARIES}/lib/macosx/${CMAKE_BUILD_TYPE}/#g' /tmp/plugins.cfg" )
 
-# 	#file( GLOB_RECURSE RESOURCES ./src/*.storyboard )
-# 	set( RESOURCES ${RESOURCES} ./bin/Data "./bin/Data/resources2.cfg" "/tmp/plugins.cfg" "${OGRE_SOURCE}/Samples/Media/" )
-# endif()
-
-# 	if( APPLE )
-# 		add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${MMSOURCES} ${RESOURCES} )
-# 	else()
-		add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
-# 	endif()
-
-target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
-
-if( UNIX )
-	target_link_libraries( ${PROJECT_NAME} dl )
+    #file( GLOB_RECURSE RESOURCES ./src/*.storyboard )
+    set( RESOURCES ${RESOURCES} ./bin/Data "./bin/Data/resources2.cfg" "/tmp/plugins.cfg" "${OGRE_SOURCE}/Samples/Media/" )
 endif()
 
 if( APPLE )
-	set_target_properties( ${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
-	set_target_properties( ${PROJECT_NAME} PROPERTIES RESOURCE "${RESOURCES}" )
-	set_target_properties( ${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/src/OgreCommon/System/OSX/Resources/Info.plist )
-	set( CMAKE_EXE_LINKER_FLAGS "
-		-framework QuartzCore
-		-framework Metal
-		-framework OpenGL
-	")
+    add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${MMSOURCES} ${RESOURCES} )
+else()
+    add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
+endif()
+
+target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
+
+if( UNIX )
+    target_link_libraries( ${PROJECT_NAME} dl )
+endif()
+
+if( APPLE )
+    set_target_properties( ${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_ENABLE_BITCODE "NO" )
+    set_target_properties( ${PROJECT_NAME} PROPERTIES RESOURCE "${RESOURCES}" )
+    set_target_properties( ${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/src/OgreCommon/System/OSX/Resources/Info.plist )
+    set( CMAKE_EXE_LINKER_FLAGS "
+        -framework QuartzCore
+        -framework Metal
+        -framework OpenGL
+        -framework cocoa
+        -lfreetype
+    ")
 
 
 endif()

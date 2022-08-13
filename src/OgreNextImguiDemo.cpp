@@ -290,9 +290,8 @@ namespace Demo
                 }
             }
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-            mWriteAccessFolder = Ogre::macCachePath() + "/ColibriGui/";
+            mWriteAccessFolder = "/tmp/imguiOgre/";
             //Create "pathToCache/ColibriGui"
-            //mWriteAccessFolder += "/ColibriGui/";
             int result = mkdir( mWriteAccessFolder.c_str(), S_IRWXU|S_IRWXG );
             int errorReason = errno;
 
