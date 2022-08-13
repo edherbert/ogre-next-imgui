@@ -1,6 +1,9 @@
 # ogre-next imgui
 
 #### An imgui backend for ogre-next
+
+![Screenshot](/extra/screenshot.png "Screenshot")
+
 A portable implementation of imgui for projects using ogre-next.
 
 This repo includes an example demo showing how to use it.

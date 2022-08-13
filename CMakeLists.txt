@@ -45,11 +45,13 @@ endif()
 
 if( APPLE )
     add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${MMSOURCES} ${RESOURCES} )
+
+    target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
 else()
     add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
-endif()
 
-target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
+    target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
+endif()
 
 if( UNIX )
     target_link_libraries( ${PROJECT_NAME} dl )

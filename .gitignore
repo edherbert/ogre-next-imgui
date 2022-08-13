@@ -4,3 +4,4 @@ src/OgreCommon
 bin
 .DS_Store
 .vscode
+Dependencies/Ogre
