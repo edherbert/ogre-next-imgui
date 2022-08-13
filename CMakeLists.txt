@@ -29,6 +29,8 @@ file(GLOB IMGUI_SOURCES
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/)
 
+set( RESOURCES ${RESOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/extra/meshes" )
+
 if( APPLE )
     set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11" )
     set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++" )
