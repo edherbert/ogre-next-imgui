@@ -65,7 +65,7 @@ namespace Demo
 
             const Ogre::String workspaceName("test Workspace");
             if(!compositorManager->hasWorkspaceDefinition(workspaceName)){
-                compositorManager->createBasicWorkspaceDef(workspaceName, Ogre::ColourValue(0, 0, 0, 1), Ogre::IdString());
+                compositorManager->createBasicWorkspaceDef(workspaceName, Ogre::ColourValue(0.2, 0.4, 0.6, 1), Ogre::IdString());
             }
 
             return compositorManager->addWorkspace(mSceneManager, mRenderWindow->getTexture(), mCamera, workspaceName, true);

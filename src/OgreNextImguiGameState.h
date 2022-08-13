@@ -26,10 +26,12 @@ namespace Demo
         virtual void mouseMoved( const SDL_Event &arg );
         virtual void mousePressed( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );
         virtual void mouseReleased( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );
-        virtual void textEditing( const SDL_TextEditingEvent &arg );
         virtual void textInput( const SDL_TextInputEvent &arg );
         virtual void keyPressed( const SDL_KeyboardEvent &arg );
         virtual void keyReleased( const SDL_KeyboardEvent &arg );
+
+    private:
+        void _keyEvent( const SDL_KeyboardEvent &arg, bool keyPressed );
     };
 }
 
