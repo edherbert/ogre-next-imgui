@@ -29,7 +29,7 @@ file(GLOB IMGUI_SOURCES
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Dependencies/imgui/)
 
-set( RESOURCES ${RESOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/extra/meshes" )
+set( MESHES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/extra/meshes" )
 
 if( APPLE )
     set( CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11" )
@@ -41,8 +41,7 @@ if( APPLE )
     execute_process( COMMAND "cp" "${OGRE_BINARIES}/bin/plugins.cfg" "/tmp/plugins.cfg" )
     execute_process( COMMAND bash -c "/usr/bin/sed -i '' 's#PluginFolder=#PluginFolder=${OGRE_BINARIES}/lib/macosx/${CMAKE_BUILD_TYPE}/#g' /tmp/plugins.cfg" )
 
-    #file( GLOB_RECURSE RESOURCES ./src/*.storyboard )
-    set( RESOURCES ${RESOURCES} ./bin/Data "./bin/Data/resources2.cfg" "/tmp/plugins.cfg" "${OGRE_SOURCE}/Samples/Media/" )
+    set( RESOURCES ${RESOURCES} ${MESHES_DIR} ./bin/Data "./bin/Data/resources2.cfg" "/tmp/plugins.cfg" "${OGRE_SOURCE}/Samples/Media/" )
 endif()
 
 if( APPLE )
@@ -52,7 +51,9 @@ if( APPLE )
 else()
     add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
 
-    target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
+    file( COPY ${MESHES_DIR} DESTINATION "${CMAKE_SOURCE_DIR}/bin/" )
+
+    target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
 endif()
 
 if( UNIX )
@@ -70,6 +71,5 @@ if( APPLE )
         -framework cocoa
         -lfreetype
     ")
-
 
 endif()
