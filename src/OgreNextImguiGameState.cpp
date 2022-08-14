@@ -137,7 +137,14 @@ namespace Demo
             tried = true;
         }
 
-        ImguiManager::getSingletonPtr()->newFrame();
+        //Calculate the frame delta time using SDL's helper functions.
+        static Uint64 g_Time = 0;
+        static Uint64 frequency = SDL_GetPerformanceFrequency();
+        Uint64 current_time = SDL_GetPerformanceCounter();
+        float deltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
+        g_Time = current_time;
+
+        ImguiManager::getSingletonPtr()->newFrame(deltaTime);
 
         //Begin issuing imgui draw calls.
         //Don't do this in the frameRenderingQueued callback,

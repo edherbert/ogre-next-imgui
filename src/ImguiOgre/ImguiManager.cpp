@@ -16,7 +16,6 @@
 #include <OgreTextureGpuManager.h>
 #include <OgreUnifiedHighLevelGpuProgram.h>
 #include <OgreViewport.h>
-#include <SDL.h>
 
 #ifdef _WIN32
 //#include <OgreD3D11Device.h>
@@ -75,16 +74,11 @@ void ImguiManager::init(Ogre::CompositorWorkspace* compositor) {
     createMaterial();
 }
 
-void ImguiManager::newFrame() {
+void ImguiManager::newFrame(float deltaTime) {
     mFrameEnded = false;
     ImGuiIO& io = ImGui::GetIO();
 
-    //TODOED get rid of this SDL2 stuff.
-    static Uint64 g_Time = 0;
-    static Uint64 frequency = SDL_GetPerformanceFrequency();
-    Uint64 current_time = SDL_GetPerformanceCounter();
-    io.DeltaTime = g_Time > 0 ? (float)((double)(current_time - g_Time) / frequency) : (float)(1.0f / 60.0f);
-    g_Time = current_time;
+    io.DeltaTime = deltaTime;
 
     // just some defaults so it doesn't crash
     float width = 400.f;

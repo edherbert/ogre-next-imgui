@@ -26,7 +26,7 @@ public:
 void init(Ogre::CompositorWorkspace* compositor);
 
 //call every frame before using any Imgui functions
-void newFrame();
+void newFrame(float deltaTime);
 //call at the end of the frame, the gui gets rendered inside of this function
 void render();
 
