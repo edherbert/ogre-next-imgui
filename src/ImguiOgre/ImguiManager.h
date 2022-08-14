@@ -11,7 +11,7 @@
 
 
 namespace Ogre{
-	class PsoCacheHelper;
+    class PsoCacheHelper;
 }
 
 class SceneManager;
@@ -19,8 +19,8 @@ class SceneManager;
 class ImguiManager : public Ogre::Singleton < ImguiManager >
 {
 public:
-	ImguiManager();
-	~ImguiManager();
+    ImguiManager();
+    ~ImguiManager();
 
 //call once before using ImGui
 void init(Ogre::CompositorWorkspace* compositor);
@@ -69,8 +69,8 @@ preventing link errors.
 static ImguiManager* getSingletonPtr(void);
 
 private:
-	void createFontTexture();
-	void createMaterial();
+    void createFontTexture();
+    void createMaterial();
 
 Ogre::FastArray<ImguiRenderable*> mRenderables;
 

@@ -58,9 +58,9 @@ namespace Demo
 {
 
     class ColibriGuiGraphicsSystem : public GraphicsSystem
-	{
-		virtual Ogre::CompositorWorkspace* setupCompositor()
-		{
+    {
+        virtual Ogre::CompositorWorkspace* setupCompositor()
+        {
             Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
 
             const Ogre::String workspaceName("test Workspace");
@@ -69,101 +69,101 @@ namespace Demo
             }
 
             return compositorManager->addWorkspace(mSceneManager, mRenderWindow->getTexture(), mCamera, workspaceName, true);
-		}
+        }
 
-		void registerHlms(void)
-		{
-			Ogre::ConfigFile cf;
-			cf.load( mResourcePath + "resources2.cfg" );
+        void registerHlms(void)
+        {
+            Ogre::ConfigFile cf;
+            cf.load( mResourcePath + "resources2.cfg" );
 
-	#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
-			Ogre::String rootHlmsFolder = Ogre::macBundlePath() + '/' +
-									  cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
-	#else
-			Ogre::String rootHlmsFolder = mResourcePath + cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
-	#endif
+    #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE || OGRE_PLATFORM == OGRE_PLATFORM_APPLE_IOS
+            Ogre::String rootHlmsFolder = Ogre::macBundlePath() + '/' +
+                                      cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+    #else
+            Ogre::String rootHlmsFolder = mResourcePath + cf.getSetting( "DoNotUseAsResource", "Hlms", "" );
+    #endif
 
-			if( rootHlmsFolder.empty() )
-				rootHlmsFolder = "./";
-			else if( *(rootHlmsFolder.end() - 1) != '/' )
-				rootHlmsFolder += "/";
+            if( rootHlmsFolder.empty() )
+                rootHlmsFolder = "./";
+            else if( *(rootHlmsFolder.end() - 1) != '/' )
+                rootHlmsFolder += "/";
 
-			//At this point rootHlmsFolder should be a valid path to the Hlms data folder
+            //At this point rootHlmsFolder should be a valid path to the Hlms data folder
 
-			Ogre::HlmsUnlit *hlmsUnlit = 0;
-			Ogre::HlmsPbs *hlmsPbs = 0;
+            Ogre::HlmsUnlit *hlmsUnlit = 0;
+            Ogre::HlmsPbs *hlmsPbs = 0;
 
-			//For retrieval of the paths to the different folders needed
-			Ogre::String mainFolderPath;
-			Ogre::StringVector libraryFoldersPaths;
-			Ogre::StringVector::const_iterator libraryFolderPathIt;
-			Ogre::StringVector::const_iterator libraryFolderPathEn;
+            //For retrieval of the paths to the different folders needed
+            Ogre::String mainFolderPath;
+            Ogre::StringVector libraryFoldersPaths;
+            Ogre::StringVector::const_iterator libraryFolderPathIt;
+            Ogre::StringVector::const_iterator libraryFolderPathEn;
 
-			Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
+            Ogre::ArchiveManager &archiveManager = Ogre::ArchiveManager::getSingleton();
 
-			{
-				//Create & Register HlmsUnlit
-				//Get the path to all the subdirectories used by HlmsUnlit
-				Ogre::HlmsUnlit::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
-				Ogre::Archive *archiveUnlit = archiveManager.load( rootHlmsFolder + mainFolderPath,
-																   "FileSystem", true );
-				Ogre::ArchiveVec archiveUnlitLibraryFolders;
-				libraryFolderPathIt = libraryFoldersPaths.begin();
-				libraryFolderPathEn = libraryFoldersPaths.end();
-				while( libraryFolderPathIt != libraryFolderPathEn )
-				{
-					Ogre::Archive *archiveLibrary =
-							archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
-					archiveUnlitLibraryFolders.push_back( archiveLibrary );
-					++libraryFolderPathIt;
-				}
+            {
+                //Create & Register HlmsUnlit
+                //Get the path to all the subdirectories used by HlmsUnlit
+                Ogre::HlmsUnlit::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
+                Ogre::Archive *archiveUnlit = archiveManager.load( rootHlmsFolder + mainFolderPath,
+                                                                   "FileSystem", true );
+                Ogre::ArchiveVec archiveUnlitLibraryFolders;
+                libraryFolderPathIt = libraryFoldersPaths.begin();
+                libraryFolderPathEn = libraryFoldersPaths.end();
+                while( libraryFolderPathIt != libraryFolderPathEn )
+                {
+                    Ogre::Archive *archiveLibrary =
+                            archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
+                    archiveUnlitLibraryFolders.push_back( archiveLibrary );
+                    ++libraryFolderPathIt;
+                }
 
-				//Create and register the unlit Hlms
-				hlmsUnlit = OGRE_NEW Ogre::HlmsUnlit( archiveUnlit, &archiveUnlitLibraryFolders );
-				Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsUnlit );
-			}
+                //Create and register the unlit Hlms
+                hlmsUnlit = OGRE_NEW Ogre::HlmsUnlit( archiveUnlit, &archiveUnlitLibraryFolders );
+                Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsUnlit );
+            }
 
-			{
-				//Create & Register HlmsPbs
-				//Do the same for HlmsPbs:
-				Ogre::HlmsPbs::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
-				Ogre::Archive *archivePbs = archiveManager.load( rootHlmsFolder + mainFolderPath,
-																 "FileSystem", true );
+            {
+                //Create & Register HlmsPbs
+                //Do the same for HlmsPbs:
+                Ogre::HlmsPbs::getDefaultPaths( mainFolderPath, libraryFoldersPaths );
+                Ogre::Archive *archivePbs = archiveManager.load( rootHlmsFolder + mainFolderPath,
+                                                                 "FileSystem", true );
 
-				//Get the library archive(s)
-				Ogre::ArchiveVec archivePbsLibraryFolders;
-				libraryFolderPathIt = libraryFoldersPaths.begin();
-				libraryFolderPathEn = libraryFoldersPaths.end();
-				while( libraryFolderPathIt != libraryFolderPathEn )
-				{
-					Ogre::Archive *archiveLibrary =
-							archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
-					archivePbsLibraryFolders.push_back( archiveLibrary );
-					++libraryFolderPathIt;
-				}
+                //Get the library archive(s)
+                Ogre::ArchiveVec archivePbsLibraryFolders;
+                libraryFolderPathIt = libraryFoldersPaths.begin();
+                libraryFolderPathEn = libraryFoldersPaths.end();
+                while( libraryFolderPathIt != libraryFolderPathEn )
+                {
+                    Ogre::Archive *archiveLibrary =
+                            archiveManager.load( rootHlmsFolder + *libraryFolderPathIt, "FileSystem", true );
+                    archivePbsLibraryFolders.push_back( archiveLibrary );
+                    ++libraryFolderPathIt;
+                }
 
-				//Create and register
-				hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
-				Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsPbs );
-			}
+                //Create and register
+                hlmsPbs = OGRE_NEW Ogre::HlmsPbs( archivePbs, &archivePbsLibraryFolders );
+                Ogre::Root::getSingleton().getHlmsManager()->registerHlms( hlmsPbs );
+            }
 
 
-			Ogre::RenderSystem *renderSystem = mRoot->getRenderSystem();
-			if( renderSystem->getName() == "Direct3D11 Rendering Subsystem" )
-			{
-				//Set lower limits 512kb instead of the default 4MB per Hlms in D3D 11.0
-				//and below to avoid saturating AMD's discard limit (8MB) or
-				//saturate the PCIE bus in some low end machines.
-				bool supportsNoOverwriteOnTextureBuffers;
-				renderSystem->getCustomAttribute( "MapNoOverwriteOnDynamicBufferSRV",
-												  &supportsNoOverwriteOnTextureBuffers );
+            Ogre::RenderSystem *renderSystem = mRoot->getRenderSystem();
+            if( renderSystem->getName() == "Direct3D11 Rendering Subsystem" )
+            {
+                //Set lower limits 512kb instead of the default 4MB per Hlms in D3D 11.0
+                //and below to avoid saturating AMD's discard limit (8MB) or
+                //saturate the PCIE bus in some low end machines.
+                bool supportsNoOverwriteOnTextureBuffers;
+                renderSystem->getCustomAttribute( "MapNoOverwriteOnDynamicBufferSRV",
+                                                  &supportsNoOverwriteOnTextureBuffers );
 
-				if( !supportsNoOverwriteOnTextureBuffers )
-				{
-					hlmsPbs->setTextureBufferDefaultSize( 512 * 1024 );
-					hlmsUnlit->setTextureBufferDefaultSize( 512 * 1024 );
-				}
-			}
+                if( !supportsNoOverwriteOnTextureBuffers )
+                {
+                    hlmsPbs->setTextureBufferDefaultSize( 512 * 1024 );
+                    hlmsUnlit->setTextureBufferDefaultSize( 512 * 1024 );
+                }
+            }
 
             #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
                 //Now setup is complete enough to allow permanent addition of the /Data/ path.
@@ -171,7 +171,7 @@ namespace Demo
                 //but this is difficult with reading in specific resources2.cfg files.
                 mResourcePath += "/Data/";
             #endif
-		}
+        }
 
         virtual void setupResources(void)
         {
@@ -183,10 +183,10 @@ namespace Demo
                 dataPath = "../Data/";
             #endif
 
-			// Ogre::CompositorPassColibriGuiProvider *compoProvider =
-			// 		OGRE_NEW Ogre::CompositorPassColibriGuiProvider( colibriManager );
-			// Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
-			// compositorManager->setCompositorPassProvider( compoProvider );
+            // Ogre::CompositorPassColibriGuiProvider *compoProvider =
+            //         OGRE_NEW Ogre::CompositorPassColibriGuiProvider( colibriManager );
+            // Ogre::CompositorManager2 *compositorManager = mRoot->getCompositorManager2();
+            // compositorManager->setCompositorPassProvider( compoProvider );
 
             GraphicsSystem::setupResources();
 
@@ -217,17 +217,17 @@ namespace Demo
             #else
                 mResourcePath = "../Data/";
             #endif
-			mAlwaysAskForConfig = false;
+            mAlwaysAskForConfig = false;
 
             //It's recommended that you set this path to:
-            //	%APPDATA%/ColibriGui/ on Windows
-            //	~/.config/ColibriGui/ on Linux
-            //	macCachePath() + "/ColibriGui/" (NSCachesDirectory) on Apple -> Important because
-            //	on iOS your app could be rejected from App Store when they see iCloud
-            //	trying to backup your Ogre.log & ogre.cfg auto-generated without user
-            //	intervention. Also convenient because these settings will be deleted
-            //	if the user removes cached data from the app, so the settings will be
-            //	reset.
+            //    %APPDATA%/ColibriGui/ on Windows
+            //    ~/.config/ColibriGui/ on Linux
+            //    macCachePath() + "/ColibriGui/" (NSCachesDirectory) on Apple -> Important because
+            //    on iOS your app could be rejected from App Store when they see iCloud
+            //    trying to backup your Ogre.log & ogre.cfg auto-generated without user
+            //    intervention. Also convenient because these settings will be deleted
+            //    if the user removes cached data from the app, so the settings will be
+            //    reset.
             //  Obviously you can replace "ColibriGui" by your app's name.
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             mWriteAccessFolder =  + "/";
