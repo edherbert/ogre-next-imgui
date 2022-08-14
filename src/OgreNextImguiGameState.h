@@ -21,8 +21,6 @@ namespace Demo
 
         virtual void update( float timeSinceLast );
 
-        virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
-
         virtual void mouseMoved( const SDL_Event &arg );
         virtual void mousePressed( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );
         virtual void mouseReleased( const SDL_MouseButtonEvent &arg, Ogre::uint8 id );

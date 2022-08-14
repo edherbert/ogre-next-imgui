@@ -47,12 +47,6 @@ namespace Demo
 
     }
     //-----------------------------------------------------------------------------------
-    bool OgreNextImguiGameState::frameRenderingQueued(const Ogre::FrameEvent& evt){
-        ImguiManager::getSingletonPtr()->render();
-
-        return true;
-    }
-    //-----------------------------------------------------------------------------------
     void OgreNextImguiGameState::createScene01(void)
     {
         // Load a mesh to show Ogre rendering something.
@@ -87,9 +81,9 @@ namespace Demo
             light->setDirection( Ogre::Vector3( -1, -1, -1 ).normalisedCopy() );
         }
 
-
+        //Register imgui for rendering
         Ogre::Root::getSingleton().addFrameListener(new ImguiFrameListener());
-
+        //initialise with your target workspace.
         ImguiManager::getSingleton().init(mGraphicsSystem->getCompositorWorkspace());
 
 
@@ -98,7 +92,7 @@ namespace Demo
             ImGuiIO& io = ImGui::GetIO();
             io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
             io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-            io.BackendPlatformName = "imgui_impl_ogre_sdl";
+            io.BackendPlatformName = "imgui_impl_ogre_next_sdl";
 
             // Keyboard mapping. ImGui will use those indices to peek into the io.KeysDown[] array.
             io.KeyMap[ImGuiKey_Tab] = SDL_SCANCODE_TAB;
@@ -145,6 +139,9 @@ namespace Demo
 
         ImguiManager::getSingletonPtr()->newFrame();
 
+        //Begin issuing imgui draw calls.
+        //Don't do this in the frameRenderingQueued callback,
+        //as if any of your logic alters Ogre state you will break things.
         bool show_demo_window = true;
         ImGui::ShowDemoWindow(&show_demo_window);
 
