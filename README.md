@@ -17,7 +17,7 @@ This repo includes an example demo showing how to use the backend.
 
 ### Including in a Project
 To include imgui in a project, simply include the contents of ```src/ImguiOgre``` in your build.
-Look through ```OgreNextImguiGameState.cpp``` for details of how to use the project in your codebase.
+Look through ```src/OgreNextImguiGameState.cpp``` for details of how to use the project in your codebase.
 
 ### Building the Demo
 
