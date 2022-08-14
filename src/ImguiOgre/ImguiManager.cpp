@@ -40,7 +40,9 @@ ImguiManager& ImguiManager::getSingleton(void) {
 
 ImguiManager::ImguiManager() : mSceneMgr(0),
                                mLastRenderedFrame(4),
-                               mFrameEnded(true) {
+                               mFrameEnded(true),
+                               mPrevWidth(0),
+                               mPrevHeight(0) {
 }
 ImguiManager::~ImguiManager() {
 
@@ -90,9 +92,13 @@ void ImguiManager::newFrame(float deltaTime) {
         width = renderTarget->getWidth();
         height = renderTarget->getHeight();
     }
+    if (mPrevWidth != width || mPrevHeight != height) {
+        mPrevWidth = width;
+        mPrevHeight = height;
 
-    // Setup display size (every frame to accommodate for window resizing)
-    io.DisplaySize = ImVec2(width, height);
+        io.DisplaySize = ImVec2(width, height);
+        updateProjectionMatrix(width, height);
+    }
 
     // Start the frame
     ImGui::NewFrame();
