@@ -20,6 +20,12 @@ To include imgui in a project, simply include the contents of ```src/ImguiOgre``
 Look through ```OgreNextImguiGameState.cpp``` for details of how to use the project in your codebase.
 
 ### Building the Demo
+
+Clone with submodules to ensure you get the imgui dependency:
+```bash
+git clone --recurse-submodules --shallow-submodules https://github.com/edherbert/ogre-next-imgui.git
+```
+
 #### Linux
 You must have built Ogre ahead of time.
 The cmake project expects Ogre to be present in the directory ```Dependencies/```, otherwise they can be specified manually:
@@ -44,7 +50,7 @@ You are expected to have built Ogre as static libraries, using the flags
 
 Ensure you build for xcode
 ```bash
-cmake -DOGRE_SOURCE=/home/user/build/ogre2/ -DOGRE_BINARIES=/home/user/build/ogre2/build/Debug/ -GXcode ..
+cmake -DOGRE_SOURCE=/Users/user/build/ogre2/ -DOGRE_BINARIES=/Users/user/build/ogre2/build/Debug/ -GXcode ..
 ```
 
 ### Special thanks
@@ -52,8 +58,11 @@ This project contains code taken from a number of sources.
 I have cleaned it up and added the features I thought were necessary to make it easily useable.
 
 Original implementation: [Crashy](https://forums.ogre3d.org/viewtopic.php?t=89081)
+
 Added Metal support: [Me](https://forums.ogre3d.org/viewtopic.php?t=94958)
+
 General fixes: [Various people](https://forums.ogre3d.org/viewtopic.php?t=93889)
+
 Updated to Ogre2.3: [Vian](https://forums.ogre3d.org/viewtopic.php?t=96798)
 
 This imgui backend was floating around in bits and pieces on the Ogre forum, I've simply unified them somwhere.
