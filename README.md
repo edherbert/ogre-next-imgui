@@ -6,13 +6,13 @@
 
 A portable backend of [imgui](https://github.com/ocornut/imgui/) for projects using [ogre-next](https://github.com/OGRECave/ogre-next).
 
-This project works with ogre-next v2.3 and has been shown to work on all Ogre's render systems
+This project works with ogre-next v2.3 and has been shown to work on the following Ogre render systems:
 
  * OpenGL3+
- * Vulkan
  * Metal
  * D3D11
 
+Vulkan does not currently work, due to the shader not being implemented.
 This repo includes an example demo showing how to use the backend.
 
 ### Including in a Project
