@@ -16,7 +16,7 @@ Vulkan does not currently work, due to the shader not being implemented.
 This repo includes an example demo showing how to use the backend.
 
 ### Including in a Project
-To include imgui in a project, simply include the contents of ```src/ImguiOgre``` in your build.
+To include imgui in a project, simply include the contents of ```src/ImguiOgre``` in your build (as well as imgui's sources).
 Look through ```src/OgreNextImguiGameState.cpp``` for details of how to use the project in your codebase.
 
 ### Building the Demo
@@ -51,6 +51,13 @@ You are expected to have built Ogre as static libraries, using the flags
 Ensure you build for xcode
 ```bash
 cmake -DOGRE_SOURCE=/Users/user/build/ogre2/ -DOGRE_BINARIES=/Users/user/build/ogre2/build/Debug/ -GXcode ..
+```
+
+#### Windows
+This project has been tested using Visual Studio.
+
+```batch
+cmake -DOGRE_SOURCE='C:\build\ogre2\' -DOGRE_BINARIES='C:\build\ogre2\build\Debug\' -DCMAKE_BUILD_TYPE=Debug ..
 ```
 
 ### Special thanks
