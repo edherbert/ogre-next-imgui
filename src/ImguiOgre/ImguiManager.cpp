@@ -16,11 +16,7 @@
 #include <OgreTextureGpuManager.h>
 #include <OgreUnifiedHighLevelGpuProgram.h>
 #include <OgreViewport.h>
-
-#ifdef _WIN32
-//#include <OgreD3D11Device.h>
-//#include <OgreD3D11RenderSystem.h>
-#endif
+#include <OgreHlmsManager.h>
 
 template <>
 ImguiManager* Ogre::Singleton<ImguiManager>::msSingleton = 0;
@@ -53,17 +49,10 @@ void ImguiManager::shutdown() {
         delete mRenderables.back();
         mRenderables.pop_back();
     }
-    // Ogre::TextureManager::getSingleton().remove(mFontTex);
     delete mPSOCache;
+    Ogre::Root::getSingletonPtr()->getHlmsManager()->destroySamplerblock(mSamplerblock);
 
-std::string name = mSceneMgr->getDestinationRenderSystem()->getName();
-    if (name == "Direct3D11 Rendering Subsystem") {
-        // This seems to me to be a work around.
-        // For some reason I was seeing assert failures when trying to destroy manual materials, OgreD3D11DeviceResource.cpp, line 59, it was checking if the device resources were empty.
-        // There was however the manual texture left over.
-        // This was the way I found to get rid of it.
-        // mFontTex->~Texture();
-    }
+    mSceneMgr->getDestinationRenderSystem()->getTextureGpuManager()->destroyTexture(mFontTex);
 }
 
 void ImguiManager::init(Ogre::CompositorWorkspace* compositor) {
@@ -71,6 +60,8 @@ void ImguiManager::init(Ogre::CompositorWorkspace* compositor) {
     mCompositor = compositor;
 
     mPSOCache = new Ogre::PsoCacheHelper(mSceneMgr->getDestinationRenderSystem());
+    Ogre::HlmsSamplerblock s;
+    mSamplerblock = Ogre::Root::getSingletonPtr()->getHlmsManager()->getSamplerblock(s);
 
     createFontTexture();
     createMaterial();
@@ -232,6 +223,7 @@ void ImguiManager::render() {
 
             Ogre::TextureGpu* texGpu = (Ogre::TextureGpu*)drawCmd->TextureId;
             mSceneMgr->getDestinationRenderSystem()->_setTexture(0, texGpu, false);
+            mSceneMgr->getDestinationRenderSystem()->_setHlmsSamplerblock(0, mSamplerblock);
 
             Ogre::v1::CbRenderOp op(renderOp);
             mSceneMgr->getDestinationRenderSystem()->_setRenderOperation(&op);

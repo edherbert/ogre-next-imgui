@@ -80,6 +80,7 @@ private:
 
     Ogre::Pass *mPass;
     Ogre::TextureGpu *mFontTex;
+    const Ogre::HlmsSamplerblock* mSamplerblock;
 
     int mLastRenderedFrame;
     bool mFrameEnded;

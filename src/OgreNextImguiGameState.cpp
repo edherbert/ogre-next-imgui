@@ -123,6 +123,7 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void OgreNextImguiGameState::destroyScene()
     {
+        ImguiManager::getSingleton().shutdown();
     }
     //-----------------------------------------------------------------------------------
     void OgreNextImguiGameState::update( float timeSinceLast )
