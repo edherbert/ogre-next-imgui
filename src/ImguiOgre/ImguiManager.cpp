@@ -141,11 +141,6 @@ void ImguiManager::render() {
     // Tell ImGui to create the buffers
     ImGui::Render();
 
-    ImGuiIO& io = ImGui::GetIO();
-    if (currentFrame < 5) {
-        // Update the matrix for the first few frames, to make sure everything's synchronised.
-        updateProjectionMatrix(io.DisplaySize.x, io.DisplaySize.y);
-    }
     if (currentFrame <= 1) {
         // Lots of stuff can be done only once for the sake of efficiency.
 
