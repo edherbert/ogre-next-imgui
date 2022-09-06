@@ -45,15 +45,20 @@ if( APPLE )
 endif()
 
 if( APPLE )
-    add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${MMSOURCES} ${RESOURCES} )
+    add_executable( ${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${MMSOURCES} ${RESOURCES} )
 
     target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
 else()
-    add_executable( ${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
+    add_executable( ${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS} ${IMGUI_SOURCES} ${RESOURCES} )
 
     file( COPY ${MESHES_DIR} DESTINATION "${CMAKE_SOURCE_DIR}/bin/" )
 
-    target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
+    if(WIN32)
+        #SDL2 libs are included with Ogre on windows.
+        target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} )
+    else()
+        target_link_libraries( ${PROJECT_NAME} ${OGRE_LIBRARIES} SDL2::SDL2 )
+    endif()
 endif()
 
 if( UNIX )
