@@ -85,6 +85,8 @@ private:
     int mLastRenderedFrame;
     bool mFrameEnded;
 
+    bool mVulkan;
+
     float mPrevWidth, mPrevHeight;
 
     Ogre::CompositorWorkspace *mCompositor;

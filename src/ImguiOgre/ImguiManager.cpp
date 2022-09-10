@@ -38,7 +38,8 @@ ImguiManager::ImguiManager() : mSceneMgr(0),
                                mLastRenderedFrame(4),
                                mFrameEnded(true),
                                mPrevWidth(0),
-                               mPrevHeight(0) {
+                               mPrevHeight(0),
+                               mVulkan(false) {
 }
 ImguiManager::~ImguiManager() {
 
@@ -62,6 +63,9 @@ void ImguiManager::init(Ogre::CompositorWorkspace* compositor) {
     mPSOCache = new Ogre::PsoCacheHelper(mSceneMgr->getDestinationRenderSystem());
     Ogre::HlmsSamplerblock s;
     mSamplerblock = Ogre::Root::getSingletonPtr()->getHlmsManager()->getSamplerblock(s);
+
+    Ogre::String renderSystemName = mSceneMgr->getDestinationRenderSystem()->getName();
+    mVulkan = (renderSystemName == "Vulkan Rendering Subsystem");
 
     createFontTexture();
     createMaterial();
@@ -96,10 +100,12 @@ void ImguiManager::newFrame(float deltaTime) {
 }
 
 void ImguiManager::updateProjectionMatrix(float width, float height) {
-    Ogre::Matrix4 projMatrix(2.0f / width, 0.0f, 0.0f, -1.0f,
-                             0.0f, -2.0f / height, 0.0f, 1.0f,
-                             0.0f, 0.0f, -1.0f, 0.0f,
-                             0.0f, 0.0f, 0.0f, 1.0f);
+    Ogre::Matrix4 projMatrix(
+        2.0f / width, 0.0f, 0.0f, -1.0f,
+        0.0f, (mVulkan ? 2.0f : -2.0f) / height, 0.0f, (mVulkan ? -1.0f : 1.0f),
+        0.0f, 0.0f, -1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
 
     mPass->getVertexProgramParameters()->setNamedConstant("ProjectionMatrix", projMatrix);
 
@@ -314,7 +320,42 @@ void ImguiManager::createMaterial() {
             "{\n"
             "out_col = col * texture(sampler0, Texcoord);\n"
             "}"};
-
+    static const char* vertexShaderSrcVK =
+        {
+            "vulkan( layout( ogre_P0 ) uniform Params { )\n"
+            "    uniform mat4 ProjectionMatrix; \n"
+            "vulkan( }; )\n"
+            "vulkan_layout( OGRE_POSITION ) in vec2 vertex;\n"
+            "vulkan_layout( OGRE_TEXCOORD0 ) in vec2 Texcoord;\n"
+            "vulkan_layout( OGRE_DIFFUSE ) in vec4 colour;\n"
+            "vulkan_layout( location = 1 )\n"
+            "out block\n"
+            "{\n"
+            "    vec2 uv0;\n"
+            "    vec4 col;\n"
+            "} outVs;\n"
+            "void main()\n"
+            "{\n"
+            "    gl_Position = ProjectionMatrix* vec4(vertex.xy, 0.f, 1.f);\n"
+            "    outVs.uv0 = Texcoord;\n"
+            "    outVs.col = colour;\n"
+            "}"};
+    static const char* pixelShaderSrcVK =
+        {
+            "vulkan_layout( ogre_t0 ) uniform texture2D sampler0;\n"
+            "vulkan( layout( ogre_s0 ) uniform sampler texSampler );\n"
+            "vulkan_layout( location = 0 )\n"
+            "out vec4 out_col;\n"
+            "vulkan_layout( location = 1 )\n"
+            "in block\n"
+            "{\n"
+            "    vec2 uv0;\n"
+            "    vec4 col;\n"
+            "} inPs;\n"
+            "void main()\n"
+            "{\n"
+            "    out_col = inPs.col * texture( vkSampler2D( sampler0, texSampler ), inPs.uv0 );"
+            "}"};
     static const char* fragmentShaderSrcMetal =
         {
             "#include <metal_stdlib>\n"
@@ -376,6 +417,9 @@ void ImguiManager::createMaterial() {
 
     Ogre::HighLevelGpuProgramPtr vertexShaderGL = mgr.getByName("imgui/VP/GL150");
     Ogre::HighLevelGpuProgramPtr pixelShaderGL = mgr.getByName("imgui/FP/GL150");
+
+    Ogre::HighLevelGpuProgramPtr vertexShaderVK = mgr.getByName("imgui/VP/VK");
+    Ogre::HighLevelGpuProgramPtr pixelShaderVK = mgr.getByName("imgui/FP/VK");
 
     Ogre::HighLevelGpuProgramPtr vertexShaderMetal = mgr.getByName("imgui/VP/Metal");
     Ogre::HighLevelGpuProgramPtr pixelShaderMetal = mgr.getByName("imgui/FP/Metal");
@@ -440,9 +484,26 @@ void ImguiManager::createMaterial() {
                                         "glsl", Ogre::GPT_FRAGMENT_PROGRAM);
         pixelShaderGL->setSource(pixelShaderSrcGLSL);
         pixelShaderGL->load();
-        pixelShaderGL->setParameter("sampler0", "int 0");
 
         pixelShaderPtr->addDelegateProgram(pixelShaderGL->getName());
+    }
+
+    if (vertexShaderVK.isNull()) {
+        vertexShaderVK = mgr.createProgram("imgui/VP/vulkan", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                                        "glslvk", Ogre::GPT_VERTEX_PROGRAM);
+        vertexShaderVK->setSource(vertexShaderSrcVK);
+        vertexShaderVK->setPrefabRootLayout(Ogre::PrefabRootLayout::Standard);
+        vertexShaderVK->load();
+        vertexShaderPtr->addDelegateProgram(vertexShaderVK->getName());
+    }
+    if (pixelShaderVK.isNull()) {
+        pixelShaderVK = mgr.createProgram("imgui/FP/vulkan", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                                        "glslvk", Ogre::GPT_FRAGMENT_PROGRAM);
+        pixelShaderVK->setSource(pixelShaderSrcVK);
+        pixelShaderVK->setPrefabRootLayout(Ogre::PrefabRootLayout::Standard);
+        pixelShaderVK->load();
+
+        pixelShaderPtr->addDelegateProgram(pixelShaderVK->getName());
     }
 
     Ogre::MaterialPtr imguiMaterial = Ogre::MaterialManager::getSingleton().create("imgui/material", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -470,10 +531,6 @@ void ImguiManager::createMaterial() {
     mPass->setBlendblock(blendblock);
     mPass->setMacroblock(macroblock);
 
-    Ogre::String renderSystemName = mSceneMgr->getDestinationRenderSystem()->getName();
-    if (renderSystemName == "OpenGL 3+ Rendering Subsystem") {
-        mPass->getFragmentProgramParameters()->setNamedConstant("sampler0", 0);
-    }
     mPass->createTextureUnitState()->setTexture(mFontTex);
 }
 
